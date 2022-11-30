@@ -68,3 +68,20 @@ def get_notifs(db: Session, user_id: int, id: int = 0):
             raise ValueError
     return items
 
+def update_notif(db: Session, user_id: int, id: int, new_notif_text: str = '', new_exec_datetime: DateTime = None):
+    if (user_id == None or id <= 0):
+        raise ValidationError
+    
+    if (new_notif_text == '' and new_exec_datetime == None):
+        raise ValueError
+    
+    notif = db.query(Notification).filter(Notification.user_id==user_id).filter(Notification.id==id).\
+        one()
+    
+    if (new_notif_text != ''):
+        notif.notif_text = new_notif_text
+    if (new_exec_datetime != None):
+        notif.exec_datetime = new_exec_datetime
+    
+    db.commit()
+
