@@ -13,7 +13,18 @@ def get_instructions_by_user_id(db: Session, user_id: int, key_text: str = '') -
         raise KeyError
     return items
 
+def add_inst(db: Session, user_id: int, key_text: str, message_id: int):
+        if (user_id == None):
+            raise ValidationError
+        if (key_text == ''):
+            raise ValidationError
+        if (message_id == None or not isinstance(message_id, int)):
+            raise ValidationError
+        key_text = key_text.lower().strip()
 
-with Session(engine) as db:
-    items = get_instructions_by_user_id(db=db, user_id=687088043, key_text='as')
-    print(items)
+        
+        inst = Instruction(user_id=user_id, key_text=key_text, message_id=message_id)
+        db.add(inst)
+        db.commit()
+
+
