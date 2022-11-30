@@ -22,9 +22,21 @@ def add_inst(db: Session, user_id: int, key_text: str, message_id: int):
             raise ValidationError
         key_text = key_text.lower().strip()
 
+        if (len(list(db.query(Instruction).filter(Instruction.user_id==user_id).where(Instruction.key_text==key_text))) > 0):
+            raise ValueError
         
         inst = Instruction(user_id=user_id, key_text=key_text, message_id=message_id)
         db.add(inst)
         db.commit()
 
+def del_inst(db: Session, id: int):
+    if (id <=0):
+        raise ValueError
+    
+    inst = db.query(Instruction).filter(Instruction.id==id)
+    if (len(list(inst)) == 0):
+        raise KeyError
+        
+    inst.delete(synchronize_session='evaluate')
+    db.commit()
 
