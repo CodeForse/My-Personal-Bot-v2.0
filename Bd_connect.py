@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, Date, DateTime, Time
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -28,4 +28,20 @@ class Instruction(Base):
     # def create_table(self):
     #     Base.metadata.create_all(engine)
 
-    
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    notif_text = Column(String)
+    exec_datetime = Column(DateTime)
+
+    def __repr__(self) -> str:
+        return f'Instruction(id={self.id!r}, user_id={self.user_id!r}, notif_text={self.notif_text!r}, exec_datetime={self.exec_datetime!r})'
+
+    # def create_table(self):
+    #     Base.metadata.create_all(engine)
+
+
