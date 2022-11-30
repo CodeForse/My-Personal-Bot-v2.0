@@ -1,7 +1,7 @@
 from BD_connect import *
 from datetime import datetime
 
-def get_instructions_by_user_id(db: Session, user_id: int, key_text: str = '') -> list[Instruction]:
+def get_inst(db: Session, user_id: int, key_text: str = '') -> list[Instruction]:
     if (user_id == None):
         raise ValidationError
     
@@ -28,6 +28,20 @@ def add_inst(db: Session, user_id: int, key_text: str, message_id: int):
         
         inst = Instruction(user_id=user_id, key_text=key_text, message_id=message_id)
         db.add(inst)
+        db.commit()
+
+def update_inst(db: Session, user_id: int, id: int, new_key_text: str = '', new_message_id: int = 0):
+        if (user_id == None or id < 0):
+            raise ValueError
+        if (new_key_text == '' and new_message_id == 0):
+            raise ValidationError
+        
+        notif = db.query(Instruction).filter(Instruction.user_id==user_id).filter(Instruction.id==id).\
+            one()
+        if (new_key_text != ''):
+            notif.key_text = new_key_text
+        if (new_message_id != 0):
+            notif.message_id = new_message_id
         db.commit()
 
 def del_inst(db: Session, id: int):
@@ -84,4 +98,5 @@ def update_notif(db: Session, user_id: int, id: int, new_notif_text: str = '', n
         notif.exec_datetime = new_exec_datetime
     
     db.commit()
+
 
