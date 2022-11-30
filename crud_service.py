@@ -111,3 +111,12 @@ def del_notif(db: Session, user_id: int, id: int):
     db.commit()
 
 
+def add_remind(db: Session, user_id: int, rem_text: str, exec_time: Time, day_cycle: int = 0):
+    if (user_id == None or rem_text == '' or exec_time == None):
+        raise ValidationError
+    if (day_cycle < 0):
+        raise ValueError
+    
+    rem = Reminds(user_id=user_id, rem_text=rem_text, exec_time=exec_time, day_cycle=day_cycle)
+    db.add(rem)
+    db.commit()

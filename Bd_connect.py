@@ -45,7 +45,7 @@ class Notification(Base):
     #     Base.metadata.create_all(engine)
 
 class Reminds(Base):
-    __table__ = 'reminds'
+    __tablename__ = 'reminds'
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
@@ -55,3 +55,7 @@ class Reminds(Base):
 
     def __repr__(self) -> str:
         return f'Reminds(id={self.id!r}, user_id={self.user_id!r}, rem_text={self.rem_text!r}, exec_time={self.exec_time!r}, day_cycle={self.day_cycle})'
+    
+    # def create_table(self):
+    #     Base.metadata.create_all(engine)
+    
