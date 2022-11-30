@@ -44,11 +44,11 @@ def update_inst(db: Session, user_id: int, id: int, new_key_text: str = '', new_
             notif.message_id = new_message_id
         db.commit()
 
-def del_inst(db: Session, id: int):
-    if (id <=0):
+def del_inst(db: Session, user_id: int, id: int):
+    if (id <=0 or user_id == None):
         raise ValueError
     
-    inst = db.query(Instruction).filter(Instruction.id==id)
+    inst = db.query(Instruction).filter(Instruction.user_id==user_id).filter(Instruction.id==id)
     if (len(list(inst)) == 0):
         raise KeyError
         
@@ -97,6 +97,17 @@ def update_notif(db: Session, user_id: int, id: int, new_notif_text: str = '', n
     if (new_exec_datetime != None):
         notif.exec_datetime = new_exec_datetime
     
+    db.commit()
+
+def del_notif(db: Session, user_id: int, id: int):
+    if (id <=0 or user_id == None):
+        raise ValueError
+    
+    notif = db.query(Notification).filter(Notification.user_id==user_id).filter(Notification.id==id)
+    if (len(list(notif)) != 1):
+        raise KeyError
+    
+    notif.delete(synchronize_session='evaluate')
     db.commit()
 
 
