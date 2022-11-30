@@ -39,7 +39,7 @@ class Notification(Base):
     exec_datetime = Column(DateTime)
 
     def __repr__(self) -> str:
-        return f'Instruction(id={self.id!r}, user_id={self.user_id!r}, notif_text={self.notif_text!r}, exec_datetime={self.exec_datetime!r})'
+        return f'Notification(id={self.id!r}, user_id={self.user_id!r}, notif_text={self.notif_text!r}, exec_datetime={self.exec_datetime!r})'
 
     # def create_table(self):
     #     Base.metadata.create_all(engine)

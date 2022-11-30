@@ -1,4 +1,5 @@
 from BD_connect import *
+from datetime import datetime
 
 def get_instructions_by_user_id(db: Session, user_id: int, key_text: str = '') -> list[Instruction]:
     if (user_id == None):
@@ -38,5 +39,18 @@ def del_inst(db: Session, id: int):
         raise KeyError
         
     inst.delete(synchronize_session='evaluate')
+    db.commit()
+
+
+def add_notif(db: Session, user_id: int, notif_text: str, exec_datetime: DateTime):
+    if (user_id == None):
+            raise ValidationError
+    if (notif_text == ''):
+        raise ValidationError
+    if (exec_datetime == None ):  # parse form datetime.strptime('30.11.22 17:22','%d.%m.%y %H:%M')
+        raise ValidationError
+    
+    notif = Notification(user_id=user_id, notif_text=notif_text, exec_datetime=exec_datetime)
+    db.add(notif)
     db.commit()
 
