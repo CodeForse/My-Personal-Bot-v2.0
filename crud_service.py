@@ -54,3 +54,17 @@ def add_notif(db: Session, user_id: int, notif_text: str, exec_datetime: DateTim
     db.add(notif)
     db.commit()
 
+def get_notifs(db: Session, user_id: int, id: int = 0):
+    if (user_id == None):
+        raise ValidationError
+    
+    if (id > 0):
+        items = db.query(Notification).filter(Notification.user_id==user_id).where(Notification.id==id)
+        if (len(list(items)) != 1):
+            raise KeyError
+    else:
+        items = db.query(Notification).filter(Notification.user_id==user_id)
+        if (len(list(items)) == 0):
+            raise ValueError
+    return items
+
