@@ -25,7 +25,7 @@ class Instruction(Base):
 
     def __repr__(self) -> str:
         return f'Instruction(id={self.id!r}, user_id={self.user_id!r}, key_text={self.key_text!r}, message_id={self.message_id!r})'
-    
+
     # def create_table(self):
     #     Base.metadata.create_all(engine)
 

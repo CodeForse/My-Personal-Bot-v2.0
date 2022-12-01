@@ -139,3 +139,32 @@ def get_reminds_by_exec_time(db: Session, exec_time: Time):
         raise ValidationError
     
     return db.query(Reminds).filter(Reminds.exec_time==exec_time).all()
+
+def update_remind(db: Session, user_id: int, id: int, new_rem_text: str = '', new_exec_time: Time = None, new_day_cyle: int = None):
+    if (user_id == '' or id <= 0 or id == None):
+        raise ValidationError
+    if (new_rem_text == '' and new_exec_time == None and new_day_cyle == None):
+        raise ValidationError
+    
+    rem = db.query(Reminds).filter(Reminds.user_id==user_id).filter(Reminds.id==id).one()
+
+    if (new_rem_text != ''):
+        rem.rem_text = new_rem_text
+    if (new_exec_time != None):
+        rem.exec_time = new_exec_time
+    if (new_day_cyle != None and new_day_cyle > 0):
+        rem.day_cycle = new_day_cyle
+
+    db.commit()
+    
+def del_remind(db: Session, user_id: int, id: int):
+    if (id <=0 or user_id == None):
+        raise ValueError
+    
+    rem = db.query(Reminds).filter(Reminds.user_id==user_id).filter(Reminds.id==id)
+
+    if (len(list(rem)) != 1):
+        raise KeyError
+    
+    rem.delete(synchronize_session='evaluate')
+    db.commit()
