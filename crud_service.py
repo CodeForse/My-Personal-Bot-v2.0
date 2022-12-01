@@ -1,4 +1,5 @@
 from BD_connect import *
+
 from datetime import datetime
 
 def get_inst(db: Session, user_id: int, key_text: str = '') -> list[Instruction]:
@@ -82,6 +83,12 @@ def get_notifs(db: Session, user_id: int, id: int = 0):
             raise ValueError
     return items
 
+def get_notifs_be_exec_date(db:Session, user_id: int, exec_datetime: datetime):
+    if (user_id == None):
+        raise ValidationError
+    
+    return db.query(Notification).filter(Notification.user_id==user_id).filter(Notification.exec_datetime.cast(Date)==exec_datetime.date())
+
 def update_notif(db: Session, user_id: int, id: int, new_notif_text: str = '', new_exec_datetime: DateTime = None):
     if (user_id == None or id <= 0):
         raise ValidationError
@@ -120,3 +127,15 @@ def add_remind(db: Session, user_id: int, rem_text: str, exec_time: Time, day_cy
     rem = Reminds(user_id=user_id, rem_text=rem_text, exec_time=exec_time, day_cycle=day_cycle)
     db.add(rem)
     db.commit()
+    
+def get_reminds_by_user_id(db: Session, user_id: int):
+    if (user_id == None ):
+        raise ValidationError
+    
+    return db.query(Reminds).filter(Reminds.user_id==user_id).all()
+
+def get_reminds_by_exec_time(db: Session, exec_time: Time):
+    if (exec_time == None):
+        raise ValidationError
+    
+    return db.query(Reminds).filter(Reminds.exec_time==exec_time).all()

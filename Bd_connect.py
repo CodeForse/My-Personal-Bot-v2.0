@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Date, DateTime, Time
+from sqlalchemy import cast
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
