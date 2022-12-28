@@ -1,5 +1,6 @@
 import pydantic
 
+
 class Keys(pydantic.BaseSettings):
     db_name: str
     db_login: str

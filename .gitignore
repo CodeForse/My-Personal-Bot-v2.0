@@ -1,3 +1,4 @@
 .env
 TG_bot_backup
 __pycache__
+.idea

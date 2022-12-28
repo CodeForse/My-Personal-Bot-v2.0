@@ -8,17 +8,15 @@ from pydantic import ValidationError
 
 from constants import *
 
-
 Base = declarative_base()
-engine = create_engine(f'postgresql+psycopg2://{KEYS.db_login}:{KEYS.db_pass}@localhost:5432/{KEYS.db_name}',\
-        echo=False, future=True)
+engine = create_engine(f'postgresql+psycopg2://{KEYS.db_login}:{KEYS.db_pass}@localhost:5432/{KEYS.db_name}', \
+                       echo=False, future=True)
 
 
 class Instruction(Base):
     __tablename__ = 'instructions'
 
-
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
     key_text = Column(String)
     message_id = Column(Integer)
@@ -33,7 +31,6 @@ class Instruction(Base):
 class Notification(Base):
     __tablename__ = 'notifications'
 
-
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
     notif_text = Column(String)
@@ -44,6 +41,7 @@ class Notification(Base):
 
     # def create_table(self):
     #     Base.metadata.create_all(engine)
+
 
 class Reminds(Base):
     __tablename__ = 'reminds'
@@ -56,7 +54,6 @@ class Reminds(Base):
 
     def __repr__(self) -> str:
         return f'Reminds(id={self.id!r}, user_id={self.user_id!r}, rem_text={self.rem_text!r}, exec_time={self.exec_time!r}, day_cycle={self.day_cycle})'
-    
+
     # def create_table(self):
     #     Base.metadata.create_all(engine)
-    
