@@ -1,21 +1,62 @@
 import re
+from datetime import datetime, timedelta
 
 from pydantic import ValidationError
 
-from RequestParse.parsed_data_clasess import NotificationData
-from constants import notification_pattern_words
+from RequestParse.parsed_data_clasess import NotificationData, RemindsData
+from RequestParse.support_functions import validation_check
+from constants import notification_pattern_words, reminder_pattern_words
 
 
 def get_notification(user_id: int, message: str):
     pattern = '|'.join(notification_pattern_words)
-    if not re.match(pattern, message):
-        raise ValidationError
-    if user_id is None:
-        raise ValueError
+    user_id, message = validation_check(user_id, message, pattern)
 
     request_text = re.findall(pattern, message)[0].strip()
     notif_text = message.replace(request_text, '', 1).strip()
 
-    return request_text, notif_text
+    if request_text == 'завтра' or request_text == 'tomorrow':
+        request_text = 'in 1 day'
+    elif re.match(r'^day after tomorrow|^послезавтра', request_text):
+        request_text = 'in 2 days'
+    elif re.match(r'^через неделю|^a week later', request_text):
+        request_text = 'in 7 days'
 
+    if re.search(r'\d+', request_text):
+        if re.match(r'^\d{2}\.\d{2}\.\d{4}', request_text):
+            exec_date = datetime.strptime(request_text, '%d.%m.%Y')
+        elif re.match(r'^\d{2}\.\d{2}\.\d{2}', request_text):
+            exec_date = datetime.strptime(request_text, '%d.%m.%y')
+        else:
+            value = int(re.search(r'\d+', request_text).group())
+            exec_date = datetime.today() + timedelta(days=value)
+    else:
+        raise ValidationError
+
+    return NotificationData(user_id=user_id, notif_text=notif_text, exec_datetime=exec_date)
+
+
+def get_remind(user_id: int, message: str):
+    pattern = '|'.join(reminder_pattern_words)
+    user_id, message = validation_check(user_id, message, pattern)
+
+    request_text = re.findall(pattern, message)[0].strip()
+    rem_text = message.replace(request_text, '', 1).strip()
+
+    exec_str_time = re.search(r'\d?\d:\d\d', request_text).group()
+    request_text = request_text.replace(exec_str_time, '')
+    if len(exec_str_time) < 5:
+        exec_str_time = '0' + exec_str_time
+    if exec_str_time == '24:00':
+        exec_str_time = '00:00'
+    exec_time = datetime.strptime(exec_str_time, '%H:%M').time()
+    val = re.search(r'\d+', request_text)
+    if val is None:
+        if 'каждый день' in request_text or 'every day' in request_text:
+            cycle = 1
+        else:
+            cycle = 0
+    else:
+        cycle = int(val.group())
+    return RemindsData(user_id=user_id, rem_text=rem_text, exec_time=exec_time, day_cycle=cycle)
 
