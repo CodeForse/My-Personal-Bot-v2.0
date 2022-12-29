@@ -3,7 +3,7 @@ import re
 from pydantic import ValidationError
 
 
-def validation_check(user_id, message, pattern):
+def validation_check(user_id, message, pattern, lower_mess = True):
     if user_id is None or message == '':
         raise ValidationError
 
@@ -15,5 +15,6 @@ def validation_check(user_id, message, pattern):
     if not re.match(pattern, message):
         raise ValidationError
 
-    message = message.lower()
+    if lower_mess:
+        message = message.lower()
     return user_id, message

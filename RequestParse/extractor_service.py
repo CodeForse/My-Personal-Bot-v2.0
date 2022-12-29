@@ -3,9 +3,9 @@ from datetime import datetime, timedelta
 
 from pydantic import ValidationError
 
-from RequestParse.parsed_data_clasess import NotificationData, RemindsData
+from RequestParse.parsed_data_clasess import NotificationData, RemindsData, InstructionData
 from RequestParse.support_functions import validation_check
-from constants import notification_pattern_words, reminder_pattern_words
+from constants import notification_pattern_words, reminder_pattern_words, instruction_pattern_words
 
 
 def get_notification(user_id: int, message: str):
@@ -59,4 +59,19 @@ def get_remind(user_id: int, message: str):
     else:
         cycle = int(val.group())
     return RemindsData(user_id=user_id, rem_text=rem_text, exec_time=exec_time, day_cycle=cycle)
+
+
+def get_instruction(user_id: int, message_key: str, val_message_id: int):
+    pattern = '|'.join(instruction_pattern_words)
+    user_id, message_key = validation_check(user_id, message_key, pattern, False)
+    if val_message_id is None or val_message_id < 0:
+        raise ValueError
+    if isinstance(val_message_id, str):
+        val_message_id = int(val_message_id)
+    elif not isinstance(val_message_id, int):
+        raise TypeError
+    if re.search(r'^"([^"]+)"', message_key):
+        message_key = message_key.replace('"','').strip()
+
+    return InstructionData(user_id=user_id, key_text=message_key, message_id=val_message_id)
 
