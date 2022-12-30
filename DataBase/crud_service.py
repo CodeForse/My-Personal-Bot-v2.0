@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time
 
 from DataBase.BD_connect import *
 
@@ -63,7 +63,7 @@ def del_inst(db: Session, user_id: int, id: int):
     db.commit()
 
 
-def add_notif(db: Session, user_id: int, notif_text: str, exec_datetime: DateTime):
+def add_notif(db: Session, user_id: int, notif_text: str, exec_datetime: datetime):
     if user_id == None:
         raise ValidationError
     if notif_text == '':
@@ -99,7 +99,7 @@ def get_notifs_be_exec_date(db: Session, user_id: int, exec_datetime: datetime):
         Notification.exec_datetime.cast(Date) == exec_datetime.date())
 
 
-def update_notif(db: Session, user_id: int, id: int, new_notif_text: str = '', new_exec_datetime: DateTime = None):
+def update_notif(db: Session, user_id: int, id: int, new_notif_text: str = '', new_exec_datetime: datetime = None):
     if user_id == None or id <= 0:
         raise ValidationError
 
@@ -129,7 +129,7 @@ def del_notif(db: Session, user_id: int, id: int):
     db.commit()
 
 
-def add_remind(db: Session, user_id: int, rem_text: str, exec_time: Time, day_cycle: int = 0):
+def add_remind(db: Session, user_id: int, rem_text: str, exec_time: time, day_cycle: int = 0):
     if user_id is None or rem_text == '' or exec_time is None:
         raise ValidationError
     if day_cycle < 0:
@@ -147,14 +147,14 @@ def get_reminds_by_user_id(db: Session, user_id: int):
     return db.query(Reminds).filter(Reminds.user_id == user_id).all()
 
 
-def get_reminds_by_exec_time(db: Session, exec_time: Time):
+def get_reminds_by_exec_time(db: Session, exec_time: time):
     if exec_time is None:
         raise ValidationError
 
     return db.query(Reminds).filter(Reminds.exec_time == exec_time).all()
 
 
-def update_remind(db: Session, user_id: int, id: int, new_rem_text: str = '', new_exec_time: Time = None,
+def update_remind(db: Session, user_id: int, id: int, new_rem_text: str = '', new_exec_time: time = None,
                   new_day_cyle: int = None):
     if user_id == '' or id <= 0 or id == None:
         raise ValidationError

@@ -71,7 +71,6 @@ def get_instruction(user_id: int, message_key: str, val_message_id: int):
     elif not isinstance(val_message_id, int):
         raise TypeError
     if re.search(r'^"([^"]+)"', message_key):
-        message_key = message_key.replace('"','').strip()
+        message_key = message_key.replace('"', '').strip()
 
     return InstructionData(user_id=user_id, key_text=message_key, message_id=val_message_id)
-
