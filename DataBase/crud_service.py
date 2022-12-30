@@ -154,6 +154,10 @@ def get_reminds_by_exec_time(db: Session, exec_time: time):
     return db.query(Reminds).filter(Reminds.exec_time == exec_time).all()
 
 
+def get_reminds_all(db: Session):
+    return db.query(Reminds).all()
+
+
 def update_remind(db: Session, user_id: int, id: int, new_rem_text: str = '', new_exec_time: time = None,
                   new_day_cyle: int = None):
     if user_id == '' or id <= 0 or id == None:
