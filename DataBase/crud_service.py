@@ -138,6 +138,7 @@ def add_remind(db: Session, user_id: int, rem_text: str, exec_time: time, day_cy
     rem = Reminds(user_id=user_id, rem_text=rem_text, exec_time=exec_time, day_cycle=day_cycle)
     db.add(rem)
     db.commit()
+    return rem.id
 
 
 def get_reminds_by_user_id(db: Session, user_id: int):
@@ -147,6 +148,15 @@ def get_reminds_by_user_id(db: Session, user_id: int):
     return db.query(Reminds).filter(Reminds.user_id == user_id).all()
 
 
+def get_remind_by_rem_id(db: Session, user_id: int, id: int):
+    if user_id == None:
+        raise ValidationError
+    if id is None:
+        raise ValidationError
+
+    return db.query(Reminds).filter(Reminds.user_id == user_id).filter(Reminds.id == id).one()
+
+
 def get_reminds_by_exec_time(db: Session, exec_time: time):
     if exec_time is None:
         raise ValidationError
@@ -154,12 +164,20 @@ def get_reminds_by_exec_time(db: Session, exec_time: time):
     return db.query(Reminds).filter(Reminds.exec_time == exec_time).all()
 
 
+def get_reminds_by_exec_time_today(db: Session, exec_time: time):
+    if exec_time is None:
+        raise ValidationError
+
+    return db.query(Reminds).filter(Reminds.next_execute_day == datetime.today()).filter(
+        Reminds.exec_time == exec_time).all()
+
+
 def get_reminds_all(db: Session):
     return db.query(Reminds).all()
 
 
 def update_remind(db: Session, user_id: int, id: int, new_rem_text: str = '', new_exec_time: time = None,
-                  new_day_cyle: int = None):
+                  new_day_cyle: int = None, new_next_execute_date: datetime = None):
     if user_id == '' or id <= 0 or id == None:
         raise ValidationError
     if new_rem_text == '' and new_exec_time == None and new_day_cyle == None:
@@ -173,6 +191,8 @@ def update_remind(db: Session, user_id: int, id: int, new_rem_text: str = '', ne
         rem.exec_time = new_exec_time
     if new_day_cyle != None and new_day_cyle > 0:
         rem.day_cycle = new_day_cyle
+    if new_next_execute_date is not None and new_next_execute_date > rem.next_execute_day:
+        rem.next_execute_day = new_next_execute_date
 
     db.commit()
 

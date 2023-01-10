@@ -5,6 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from pydantic import ValidationError
+from datetime import datetime
 
 from constants import *
 
@@ -51,9 +52,10 @@ class Reminds(Base):
     rem_text = Column(String)
     exec_time = Column(Time)
     day_cycle = Column(Integer, default=0)
+    next_execute_day = Column(DateTime, default=datetime.today())
 
     def __repr__(self) -> str:
-        return f'Reminds(id={self.id!r}, user_id={self.user_id!r}, rem_text={self.rem_text!r}, exec_time={self.exec_time!r}, day_cycle={self.day_cycle})'
+        return f'Reminds(id={self.id!r}, user_id={self.user_id!r}, rem_text={self.rem_text!r}, exec_time={self.exec_time!r}, day_cycle={self.day_cycle}, next_execute_day={self.next_execute_day})'
 
     # def create_table(self):
     #     Base.metadata.create_all(engine)
